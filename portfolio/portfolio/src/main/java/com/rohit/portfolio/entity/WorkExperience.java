@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+
 @Data
 @Entity
 @Table(name = "work_experience")
 public class WorkExperience {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exp_key")
     private Integer expKey;
 

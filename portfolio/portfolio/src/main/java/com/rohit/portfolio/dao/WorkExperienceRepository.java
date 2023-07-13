@@ -1,0 +1,16 @@
+package com.rohit.portfolio.dao;
+
+import com.rohit.portfolio.entity.UserDetail;
+import com.rohit.portfolio.entity.WorkExperience;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface WorkExperienceRepository extends JpaRepository<WorkExperience, Integer> {
+    @Query("SELECT we FROM WorkExperience we WHERE we.userDetail = :userId")
+    Optional<List<WorkExperience>> getWorkExperienceByUserId(UserDetail userId);
+}

@@ -1,7 +1,7 @@
 package com.rohit.portfolio.service;
 
-import com.rohit.portfolio.dao.UserDetailsRepository;
 import com.rohit.portfolio.entity.UserDetail;
+import com.rohit.portfolio.entity.WorkExperience;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,51 +13,22 @@ import java.util.Optional;
 @Service
 public class ProfileService {
 
-    private final UserDetailsRepository userDetailsRepository;
+    @Autowired
+    private UserDetailService userDetailService;
 
     @Autowired
-    public ProfileService(UserDetailsRepository userDetailsRepository) {
-        this.userDetailsRepository = userDetailsRepository;
-    }
+    private WorkExperienceService workExperienceService;
 
-    public ResponseEntity<UserDetail> getProfileData(int id) {
-        Optional<UserDetail> userDetailOptional = userDetailsRepository.findById(id);
-        if (userDetailOptional.isPresent()) {
-            return new ResponseEntity<>(userDetailOptional.get(), HttpStatus.OK);
+
+    public ResponseEntity<List<WorkExperience>> getWorkExperience(int id) {
+        ResponseEntity<UserDetail> userDetail = userDetailService.getProfileData(id);
+        if (userDetail.getStatusCode() == HttpStatus.OK) {
+            Optional<List<WorkExperience>> we = workExperienceService.getWorkExperienceByUserId(userDetail.getBody());
+            if(we.isPresent()){
+                return new ResponseEntity<>(we.get(), HttpStatus.OK);
+            }
+            return new ResponseEntity("Work experience not found.",HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity("User Profile not found.",HttpStatus.NOT_FOUND);
     }
-
-    public ResponseEntity<String> deleteProfileData(int id) {
-        try {
-            userDetailsRepository.deleteById(id);
-            return new ResponseEntity<>("Deleted", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public ResponseEntity<String> updateProfileData(UserDetail user) {
-        try {
-            userDetailsRepository.save(user);
-            return new ResponseEntity<>("Updated", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public ResponseEntity<List<UserDetail>> getAllUserDetails() {
-        List<UserDetail> userDetailsList = userDetailsRepository.findAll();
-        return new ResponseEntity<>(userDetailsList, HttpStatus.OK);
-    }
-
-    public ResponseEntity<UserDetail> getUserData(int id) {
-        Optional<UserDetail> userDetailOptional = userDetailsRepository.findById(id);
-        if (userDetailOptional.isPresent()) {
-            return new ResponseEntity<>(userDetailOptional.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
 }

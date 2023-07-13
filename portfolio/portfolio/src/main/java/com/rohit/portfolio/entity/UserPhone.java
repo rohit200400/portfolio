@@ -14,8 +14,9 @@ public class UserPhone {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private UserDetail userDetail;
+    private UserDetail userId;
 
+    // this is ENUM ('primary' , 'secondary')
     @Column(name = "type", nullable = false)
     private String type;
 

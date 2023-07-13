@@ -2,6 +2,7 @@ package com.rohit.portfolio.service;
 
 import com.rohit.portfolio.dao.SocialProfileRepository;
 import com.rohit.portfolio.entity.SocialProfile;
+import com.rohit.portfolio.entity.SocialProfile.SocialProfileIdPK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,55 +21,51 @@ public class SocialProfileService {
         this.socialProfileRepository = socialProfileRepository;
     }
 
-    public ResponseEntity<SocialProfile> getSocialProfileById(int userId, int mediaKey) {
-        Optional<SocialProfile> socialProfileOptional = socialProfileRepository.findByIdandMediaKey(userId, mediaKey);
-        if (socialProfileOptional.isPresent()) {
-            return new ResponseEntity<>(socialProfileOptional.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    /**
+     * Saves a new SocialProfile object.
+     *
+     * @param socialProfile The SocialProfile object to be saved.
+     * @return The saved SocialProfile object.
+     */
+    public SocialProfile saveSocialProfile(SocialProfile socialProfile) {
+        return socialProfileRepository.save(socialProfile);
     }
 
-    public ResponseEntity<SocialProfile> getSocialProfileByUserId(int userId) {
-        Optional<SocialProfile> socialProfileOptional = socialProfileRepository.getSocialProfileByUserId(userId);
-        if (socialProfileOptional.isPresent()) {
-            return new ResponseEntity<>(socialProfileOptional.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    /**
+     * Retrieves a SocialProfile object by user ID and social media key.
+     *
+     * @param userDetail   The user ID of the SocialProfile.
+     * @param socialMedia  The social media key of the SocialProfile.
+     * @return An Optional containing the SocialProfile object if found, or an empty Optional if not found.
+     */
+    public Optional<SocialProfile> getSocialProfileById(Integer userDetail, Integer socialMedia) {
+        SocialProfileIdPK socialProfileId = new SocialProfileIdPK(userDetail, socialMedia);
+        return socialProfileRepository.findById(socialProfileId);
     }
 
-    public ResponseEntity<List<SocialProfile>> getAllSocialProfiles() {
-        List<SocialProfile> socialProfiles = socialProfileRepository.findAll();
-        return new ResponseEntity<>(socialProfiles, HttpStatus.OK);
+    /**
+     * Retrieves all SocialProfile objects.
+     *
+     * @return A list of all SocialProfile objects.
+     */
+    public List<SocialProfile> getAllSocialProfiles() {
+        return socialProfileRepository.findAll();
     }
 
+    /**
+     * Deletes a SocialProfile object by user ID and social media key.
+     *
+     * @param userId   The user ID of the SocialProfile to be deleted.
+     * @param mediaKey  The social media key of the SocialProfile to be deleted.
+     */
     public ResponseEntity<String> deleteSocialProfileById(int userId, int mediaKey) {
         try {
-            socialProfileRepository.deleteById(userId, mediaKey);
-            return new ResponseEntity<>("Deleted", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+            SocialProfileIdPK socialProfileId = new SocialProfileIdPK(userId, mediaKey);
+            Optional<SocialProfile> socialProfileOptional = socialProfileRepository.findById(socialProfileId);
 
-    public ResponseEntity<String> saveSocialProfile(SocialProfile socialProfile) {
-        try {
-            socialProfileRepository.save(socialProfile);
-            return new ResponseEntity<>("Saved", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public ResponseEntity<String> updateSocialProfile(SocialProfile socialProfile) {
-        try {
-            Optional<SocialProfile> existingProfileOptional = socialProfileRepository.findByIdandMediaKey(socialProfile.getUserDetail().getUserId(), socialProfile.getSocialMedia().getMediaKey());
-
-            if (existingProfileOptional.isPresent()) {
-                SocialProfile existingProfile = existingProfileOptional.get();
-                existingProfile.setProfileLink(socialProfile.getProfileLink());
-
-                socialProfileRepository.save(existingProfile);
-                return new ResponseEntity<>("Updated", HttpStatus.OK);
+            if (socialProfileOptional.isPresent()) {
+                socialProfileRepository.delete(socialProfileOptional.get());
+                return new ResponseEntity<>("Deleted", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Social profile not found", HttpStatus.NOT_FOUND);
             }
@@ -76,4 +73,5 @@ public class SocialProfileService {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
