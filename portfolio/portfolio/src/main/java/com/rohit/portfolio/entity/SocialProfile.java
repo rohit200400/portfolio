@@ -19,4 +19,5 @@ public class SocialProfile {
 
     @Column(name = "profile_link", nullable = false)
     private String profileLink;
+
 }
