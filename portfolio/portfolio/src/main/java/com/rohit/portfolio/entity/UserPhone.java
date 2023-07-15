@@ -1,5 +1,6 @@
 package com.rohit.portfolio.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,9 +13,10 @@ public class UserPhone {
     @Column(name = "contact_number", nullable = false)
     private String contactNumber;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private UserDetail userId;
+    private UserDetail userDetail;
 
     // this is ENUM ('primary' , 'secondary')
     @Column(name = "type", nullable = false)

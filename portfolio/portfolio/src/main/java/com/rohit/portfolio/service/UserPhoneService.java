@@ -1,5 +1,6 @@
 package com.rohit.portfolio.service;
 
+import com.rohit.portfolio.entity.UserDetail;
 import com.rohit.portfolio.entity.UserPhone;
 import com.rohit.portfolio.dao.UserPhoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,11 @@ public class UserPhoneService {
     /**
      * Retrieves all UserPhone objects by user id.
      *
-     * @param userId The User ID of the User.
+     * @param userDetail The User ID of the User.
      * @return An Optional containing the list of all UserPhone object if found, or an empty Optional if not found.
      */
-    public Optional<List<UserPhone>> getUserPhoneByUserId(int userId) {
-        return userPhoneRepository.getUserPhoneByUserId(userId);
+    public Optional<List<UserPhone>> getUserPhoneByUserId(UserDetail userDetail) {
+        return userPhoneRepository.getUserPhoneByUserDetail(userDetail);
     }
 
     /**

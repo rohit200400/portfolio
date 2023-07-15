@@ -1,5 +1,6 @@
 package com.rohit.portfolio.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @IdClass(SocialProfile.SocialProfileIdPK.class)
 public class SocialProfile {
 
+    @JsonIgnore
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)

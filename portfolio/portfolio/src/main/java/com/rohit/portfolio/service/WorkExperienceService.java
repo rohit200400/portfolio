@@ -31,11 +31,11 @@ public class WorkExperienceService {
     /**
      * Retrieves a WorkExperience object by experience key.
      *
-     * @param userId the UserId of the User.
+     * @param userDetail the UserId of the User.
      * @return An Optional containing the WorkExperience object if found, or an empty Optional if not found.
      */
-    public Optional<List<WorkExperience>> getWorkExperienceByUserId(UserDetail userId) {
-        return workExperienceRepository.getWorkExperienceByUserId(userId);
+    public Optional<List<WorkExperience>> getWorkExperienceByUserId(UserDetail userDetail) {
+        return workExperienceRepository.getWorkExperienceByUserDetail(userDetail);
     }
 
     /**

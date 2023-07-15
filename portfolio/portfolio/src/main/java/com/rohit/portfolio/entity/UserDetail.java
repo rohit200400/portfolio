@@ -1,5 +1,6 @@
 package com.rohit.portfolio.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,6 +30,7 @@ public class UserDetail {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "address", referencedColumnName = "address_id", nullable = false)
     private Address address;
