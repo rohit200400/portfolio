@@ -2,6 +2,7 @@ package com.rohit.portfolio.service;
 
 import com.rohit.portfolio.dao.ProjectsRepository;
 import com.rohit.portfolio.entity.Project;
+import com.rohit.portfolio.entity.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,20 @@ public class ProjectsService {
         Optional<Project> projectOptional = projectsRepository.findById(projectId);
         if (projectOptional.isPresent()) {
             return new ResponseEntity<>(projectOptional.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Retrieves a project by UserDetail.
+     *
+     * @param userDetail The ID of the User.
+     * @return ResponseEntity containing the project if found, or NOT_FOUND status if not found.
+     */
+    public ResponseEntity<List<Project>> getProjectsByUserDetail(UserDetail userDetail) {
+        List<Project> projectOptional = projectsRepository.getProjectByUserDetail(userDetail);
+        if (projectOptional.size() > 0) {
+            return new ResponseEntity<>(projectOptional, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

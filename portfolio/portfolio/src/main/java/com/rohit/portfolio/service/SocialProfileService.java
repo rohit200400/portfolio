@@ -3,6 +3,7 @@ package com.rohit.portfolio.service;
 import com.rohit.portfolio.dao.SocialProfileRepository;
 import com.rohit.portfolio.entity.SocialProfile;
 import com.rohit.portfolio.entity.SocialProfile.SocialProfileIdPK;
+import com.rohit.portfolio.entity.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,17 @@ public class SocialProfileService {
     public Optional<SocialProfile> getSocialProfileById(Integer userDetail, Integer socialMedia) {
         SocialProfileIdPK socialProfileId = new SocialProfileIdPK(userDetail, socialMedia);
         return socialProfileRepository.findById(socialProfileId);
+    }
+
+
+    /**
+     * Retrieves a SocialProfile object by user ID and social media key.
+     *
+     * @param userDetail   The user ID of the SocialProfile.
+     * @return An Optional containing the List of SocialProfile object if found, or an empty Optional if not found.
+     */
+    public Optional<List<SocialProfile>> getSocialProfileByUserDetail(UserDetail userDetail) {
+        return socialProfileRepository.getSocialProfileByUserDetail(userDetail);
     }
 
     /**

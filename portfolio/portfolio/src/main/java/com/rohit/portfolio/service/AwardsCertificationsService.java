@@ -2,6 +2,7 @@ package com.rohit.portfolio.service;
 
 import com.rohit.portfolio.dao.AwardsCertificationsRepository;
 import com.rohit.portfolio.entity.AwardsCertifications;
+import com.rohit.portfolio.entity.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,20 @@ public class AwardsCertificationsService {
      */
     public ResponseEntity<AwardsCertifications> getAwardsCertification(int id) {
         Optional<AwardsCertifications> awardsCertificationOptional = awardsCertificationsRepository.findById(id);
+        if (awardsCertificationOptional.isPresent()) {
+            return new ResponseEntity<>(awardsCertificationOptional.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Retrieves an awards certification by UsedDetail.
+     *
+     * @param userDetail The ID of the awards certification to retrieve.
+     * @return ResponseEntity containing the awards certification if found, or NOT_FOUND status if not found.
+     */
+    public ResponseEntity<List<AwardsCertifications>> getAwardsCertificationByUserDetail(UserDetail userDetail) {
+        Optional<List<AwardsCertifications>> awardsCertificationOptional = awardsCertificationsRepository.getAwardsCertificationByUserDetail(userDetail);
         if (awardsCertificationOptional.isPresent()) {
             return new ResponseEntity<>(awardsCertificationOptional.get(), HttpStatus.OK);
         }

@@ -2,6 +2,7 @@ package com.rohit.portfolio.service;
 
 import com.rohit.portfolio.dao.CareerSummaryRepository;
 import com.rohit.portfolio.entity.CareerSummary;
+import com.rohit.portfolio.entity.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,21 @@ public class CareerSummaryService {
      */
     public ResponseEntity<CareerSummary> getCareerSummary(int summaryId) {
         Optional<CareerSummary> careerSummaryOptional = careerSummaryRepository.findById(summaryId);
+        if (careerSummaryOptional.isPresent()) {
+            return new ResponseEntity<>(careerSummaryOptional.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    /**
+     * Retrieves a career summary by its ID.
+     *
+     * @param usedDetail The ID of the career summary to retrieve.
+     * @return ResponseEntity containing the career summary if found, or NOT_FOUND status if not found.
+     */
+    public ResponseEntity<List<CareerSummary>> getCareerSummaryByUserDetail(UserDetail usedDetail) {
+        Optional<List<CareerSummary>> careerSummaryOptional = careerSummaryRepository.getCareerSummaryByUserDetail(usedDetail);
         if (careerSummaryOptional.isPresent()) {
             return new ResponseEntity<>(careerSummaryOptional.get(), HttpStatus.OK);
         }

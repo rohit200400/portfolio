@@ -1,9 +1,6 @@
 package com.rohit.portfolio.service;
 
-import com.rohit.portfolio.entity.UserDetail;
-import com.rohit.portfolio.entity.UserPhone;
-import com.rohit.portfolio.entity.UserSkill;
-import com.rohit.portfolio.entity.WorkExperience;
+import com.rohit.portfolio.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +15,8 @@ public class ProfileService {
 
     @Autowired
     private UserDetailService userDetailService;
-
+    @Autowired
+    private SocialProfileService socialProfileService;
     @Autowired
     private WorkExperienceService workExperienceService;
 
@@ -31,26 +29,24 @@ public class ProfileService {
     @Autowired
     private UserSkillService userSkillService;
 
+    @Autowired
+    private ProjectsService projectsService;
 
-    public ResponseEntity<List<WorkExperience>> getWorkExperience(int id) {
-        ResponseEntity<UserDetail> userDetail = userDetailService.getProfileData(id);
-        if (userDetail.getStatusCode() == HttpStatus.OK) {
-            Optional<List<WorkExperience>> we = workExperienceService.getWorkExperienceByUserId(userDetail.getBody());
-            if(we.isPresent()){
-                return new ResponseEntity<>(we.get(), HttpStatus.OK);
-            }
-            return new ResponseEntity("Work experience not found.",HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity("User Profile not found.",HttpStatus.NOT_FOUND);
-    }
+    @Autowired
+    private CareerSummaryService careerSummaryService;
+
+    @Autowired
+    private AwardsCertificationsService awardsCertificationsService;
 
 
     public ResponseEntity<List<Object>> getUserPortfolio(int id) {
         List<Object> finalResponse = new ArrayList<>();
         ResponseEntity<UserDetail> userDetail = userDetailService.getProfileData(id);
         if (userDetail.getStatusCode() == HttpStatus.OK) {
+            // Adding user details
             finalResponse.add(userDetail.getBody());
 
+            // crating an userDetail object for passing to other methods
             UserDetail user = userDetail.getBody();
 
             // Adding Address
@@ -66,7 +62,25 @@ public class ProfileService {
             }
 
             // Getting the work experience
-            Optional<List<WorkExperience>> we = workExperienceService.getWorkExperienceByUserId(userDetail.getBody());
+            Optional<List<SocialProfile>> socialProfiles = socialProfileService.getSocialProfileByUserDetail(user);
+            if(socialProfiles.isPresent()){
+                finalResponse.add(socialProfiles.get());
+            }
+            else {
+                finalResponse.add("No social profile for the user.");
+            }
+
+            // Getting Career Summary
+            ResponseEntity<List<CareerSummary>> careerSummary = careerSummaryService.getCareerSummaryByUserDetail(user);
+            if(careerSummary.getStatusCode() == HttpStatus.OK){
+                finalResponse.add(careerSummary.getBody());
+            }
+            else if(careerSummary.getStatusCode() == HttpStatus.NOT_FOUND) {
+                finalResponse.add("No career summary to show.");
+            }
+
+            // Getting the work experience
+            Optional<List<WorkExperience>> we = workExperienceService.getWorkExperienceByUserId(user);
             if(we.isPresent()){
                 finalResponse.add(we.get());
             }
@@ -83,8 +97,25 @@ public class ProfileService {
                 finalResponse.add("No skills added for the user.");
            }
 
+            // Getting projects
+            ResponseEntity<List<Project>>  projects = projectsService.getProjectsByUserDetail(user);
+            if(projects.getStatusCode() == HttpStatus.OK){
+                finalResponse.add(projects.getBody());
+            }
+            else {
+                finalResponse.add("No projects to retrieve for the user.");
+            }
 
-            return new ResponseEntity(finalResponse,HttpStatus.NOT_FOUND);
+            // Getting Awards and Certification details
+            ResponseEntity<List<AwardsCertifications>> awardCert = awardsCertificationsService.getAwardsCertificationByUserDetail(user);
+            if(awardCert.getStatusCode() == HttpStatus.OK){
+                finalResponse.add(awardCert.getBody());
+            }
+            else {
+                finalResponse.add("No awards or certifications to retrieve for the user.");
+            }
+
+            return new ResponseEntity(finalResponse,HttpStatus.OK);
         }
         return new ResponseEntity("User Profile not found.",HttpStatus.NOT_FOUND);
     }
