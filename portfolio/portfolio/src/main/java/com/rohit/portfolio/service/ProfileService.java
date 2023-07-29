@@ -119,5 +119,22 @@ public class ProfileService {
         }
         return new ResponseEntity("User Profile not found.",HttpStatus.NOT_FOUND);
     }
+
+    public ResponseEntity<List<Object>> updateProfileData(PersonRequest personRequest) {
+        try {
+            List<Object> output = new ArrayList<>();
+            Address address = addressService.saveAddress(personRequest.getaddress()).getBody();
+            System.out.println("Added address to the database");
+            UserDetail newUser  = personRequest.getUserDetail();
+            newUser.setAddress(address);
+            output.add(userDetailService.updateProfileData(newUser).getBody());
+            output.add(address);
+
+            return new ResponseEntity<>(output, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println("Inside user service catch.");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 

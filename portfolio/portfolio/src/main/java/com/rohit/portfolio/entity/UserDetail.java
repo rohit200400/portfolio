@@ -30,6 +30,12 @@ public class UserDetail {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "roles", columnDefinition = "VARCHAR(255) DEFAULT 'USER'")
+    private String roles;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "address", referencedColumnName = "address_id", nullable = false)

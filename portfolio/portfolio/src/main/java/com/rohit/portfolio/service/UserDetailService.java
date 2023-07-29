@@ -37,12 +37,13 @@ public class UserDetailService {
         }
     }
 
-    public ResponseEntity<String> updateProfileData(UserDetail user) {
+    public ResponseEntity<UserDetail> updateProfileData(UserDetail user) {
         try {
-            userDetailsRepository.save(user);
-            return new ResponseEntity<>("Updated", HttpStatus.OK);
+            UserDetail newUser  = userDetailsRepository.save(user);
+            System.out.println("created User");
+            return new ResponseEntity<>(newUser, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
